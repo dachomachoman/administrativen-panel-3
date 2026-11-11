@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="mk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Лумина — Администрација на е-продавница</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{color-scheme:light;--bg:#f5f7fb;--card:#fff;--tx:#0f1b33;--mt:#6b7794;--bd:#e6eaf2;--ac:#2f5bea;--ac2:#eaf0ff;--ok:#16a36a;--wn:#f08a24;--er:#e5484d;--sh:0 1px 2px rgba(15,27,51,.05),0 10px 28px -14px rgba(15,27,51,.14)}
+[data-theme=dark]{color-scheme:dark;--bg:#0b1120;--card:#131b2e;--tx:#e8edf8;--mt:#8d9ab8;--bd:#222c45;--ac:#6c8cff;--ac2:#1b2644;--sh:0 10px 28px -14px #000a}
+*{box-sizing:border-box;margin:0}
+body{font:14px/1.5 Manrope,system-ui,sans-serif;background:var(--bg);color:var(--tx);-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+#sb{position:fixed;inset:0 auto 0 0;width:248px;background:var(--card);border-right:1px solid var(--bd);display:flex;flex-direction:column;padding:16px 12px;z-index:30;transition:.25s}
+#app{margin-left:248px;transition:.25s}
+.logo{display:flex;align-items:center;gap:11px;padding:4px 8px 20px;font-weight:800;font-size:18px;letter-spacing:-.02em}
+.logo i{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#5b86ff,#1f3fb8);display:grid;place-items:center;color:#fff;flex:none}
+#nav{display:flex;flex-direction:column;gap:3px;flex:1}
+#nav a{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;color:var(--mt);font-weight:600;cursor:pointer;position:relative;transition:.15s}
+#nav a:hover{background:var(--bg);color:var(--tx)}
+#nav a.on{background:var(--ac2);color:var(--ac)}
+#nav a.on::before{content:"";position:absolute;left:-12px;top:9px;bottom:9px;width:3px;border-radius:0 3px 3px 0;background:var(--ac)}
+.nb{margin-left:auto;background:var(--er);color:#fff;border-radius:99px;font-size:11px;padding:0 7px;line-height:18px}
+.pf{display:flex;gap:10px;align-items:center;padding:12px 8px 0;border-top:1px solid var(--bd)}
+.av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#7a9bff,#2f5bea);color:#fff;display:grid;place-items:center;font-weight:700;font-size:13px;flex:none;border:0}
+.pf small,.mt{color:var(--mt)}
+body.col #sb{width:76px}body.col #app{margin-left:76px}body.col .lb,body.col .nb{display:none}
+header{position:sticky;top:0;z-index:20;height:64px;display:flex;align-items:center;gap:12px;padding:0 24px;background:color-mix(in srgb,var(--bg) 85%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd)}
+.ib{width:38px;height:38px;border-radius:10px;border:0;background:transparent;color:var(--mt);display:grid;place-items:center;position:relative;transition:.15s;flex:none}
+.ib:hover{background:var(--ac2);color:var(--ac)}.ib.d:hover{color:var(--er)}
+.dot{position:absolute;top:4px;right:4px;background:var(--er);color:#fff;border-radius:99px;font-size:10px;min-width:16px;line-height:16px;text-align:center}
+.sr{position:relative;flex:1;max-width:440px}
+.sr svg{position:absolute;left:12px;top:11px;color:var(--mt)}
+.sr input{padding-left:38px}
+.rel{position:relative}
+.dd{position:absolute;right:0;top:46px;width:330px;background:var(--card);border:1px solid var(--bd);border-radius:14px;box-shadow:var(--sh);display:none;padding:8px;z-index:50;max-height:420px;overflow:auto}
+.dd.on{display:block}.sr .dd{left:0;right:auto;top:44px;width:100%}
+.dd button,.dd .it{display:block;width:100%;text-align:left;border:0;background:none;padding:9px 10px;border-radius:9px}
+.dd button:hover{background:var(--ac2)}
+.dd small{display:block;color:var(--mt);font-size:12px}
+.it.un{background:var(--ac2)}
+main{padding:24px;max-width:1440px;margin:auto}
+.view{animation:fi .25s ease}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}}
+.ph{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:20px}
+h1{font-size:24px;font-weight:800;letter-spacing:-.02em}
+.big{font-size:clamp(28px,4.4vw,42px);letter-spacing:-.03em;line-height:1.1}
+.ph p{color:var(--mt)}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;box-shadow:var(--sh);padding:20px;margin-bottom:20px}
+.ch{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+h3{font-size:16px;font-weight:700}
+.kp{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:16px;margin-bottom:20px}
+.kp .card{margin:0;position:relative;overflow:hidden}
+.kp .card::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:linear-gradient(90deg,var(--ac),transparent)}
+.kc{display:flex;justify-content:space-between;color:var(--mt);font-weight:600}
+.kc i{width:38px;height:38px;border-radius:11px;background:var(--ac2);color:var(--ac);display:grid;place-items:center}
+.kv{font-size:27px;font-weight:800;letter-spacing:-.03em;margin:8px 0 4px}
+.up{color:var(--ok)}.dw{color:var(--er)}
+.g2c{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:20px}
+.g2c .card{margin:0}
+.cv{position:relative;height:300px}
+.seg{display:flex;gap:4px;background:var(--bg);padding:4px;border-radius:10px;flex-wrap:wrap}
+.seg button{border:0;background:none;padding:6px 12px;border-radius:7px;color:var(--mt);font-weight:600;font-size:13px}
+.seg .on{background:var(--card);color:var(--ac);box-shadow:var(--sh)}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 14px;border-radius:10px;border:1px solid var(--bd);background:var(--card);font-weight:600;transition:.15s}
+.btn:hover{border-color:var(--ac);color:var(--ac)}
+.btn.pr{background:linear-gradient(180deg,#3d68f2,#2a52d8);color:#fff;border-color:transparent;box-shadow:0 6px 14px -6px #2f5bea}
+.btn.pr:hover{filter:brightness(1.08);color:#fff}
+.btn.dn{background:var(--er);color:#fff;border-color:transparent}
+.btn.sm{padding:6px 10px;font-size:13px}
+input,select,textarea{font:inherit;color:inherit;background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:9px 12px;width:100%;transition:.15s}
+input:focus,select:focus,textarea:focus{border-color:var(--ac);outline:0;box-shadow:0 0 0 3px var(--ac2)}
+.tb{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.tb input,.tb select{width:auto;min-width:150px;flex:1;max-width:260px}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-size:12px;color:var(--mt);font-weight:700;padding:11px 14px;border-bottom:1px solid var(--bd);white-space:nowrap}
+th[onclick]{cursor:pointer}th[onclick]:hover{color:var(--ac)}
+td{padding:11px 14px;border-bottom:1px solid var(--bd);vertical-align:middle}
+tbody tr:hover td{background:color-mix(in srgb,var(--ac2) 55%,transparent)}
+.nw{white-space:nowrap}
+.th{width:44px;height:44px;border-radius:11px;background:var(--ac2);display:grid;place-items:center;overflow:hidden;font-size:22px;flex:none}
+.th img{width:100%;height:100%;object-fit:cover}
+.fx{display:flex;align-items:center;gap:12px}
+.b{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:99px;font-size:12px;font-weight:700;white-space:nowrap;color:var(--c);background:color-mix(in srgb,var(--c) 14%,transparent)}
+.b::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--c)}
+.sw{width:38px;height:22px;border-radius:99px;background:#c3cbdd;border:0;position:relative;transition:.2s}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:.2s}
+.sw.on{background:var(--ac)}.sw.on::after{left:19px}
+.qc input{width:84px;padding:6px 8px}.qc{display:flex;flex-direction:column;gap:6px}
+.bar{height:5px;border-radius:9px;background:var(--bd);overflow:hidden;width:84px}.bar i{display:block;height:100%;border-radius:9px;transition:.4s}
+.mi{width:70px!important;padding:6px 8px}
+.li{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--bd)}
+.li:last-child{border:0}.li>div:nth-child(2){flex:1;min-width:0}
+.li small{color:var(--mt);display:block}
+.empty{text-align:center;padding:40px 10px;color:var(--mt)}
+.empty b{display:block;color:var(--tx);font-size:16px;margin:8px 0 2px}
+.alert{display:flex;gap:10px;align-items:center;padding:12px 16px;border-radius:12px;background:color-mix(in srgb,var(--wn) 14%,transparent);color:var(--wn);font-weight:600;margin-bottom:16px}
+#ov{position:fixed;inset:0;background:rgba(10,18,40,.55);display:none;align-items:center;justify-content:center;z-index:100;padding:16px;backdrop-filter:blur(3px)}
+#ov.on{display:flex}
+#md{background:var(--card);border-radius:16px;width:100%;max-height:92vh;overflow:auto;box-shadow:0 30px 80px -20px #0008;animation:fi .2s}
+.mh{display:flex;justify-content:space-between;align-items:center;padding:16px 22px;border-bottom:1px solid var(--bd)}
+#mb{padding:22px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+label{display:block;font-weight:600;font-size:13px}label input,label select,label textarea{margin-top:6px;font-weight:400}
+.er{color:var(--er);font-size:12px;font-style:normal;display:block}
+.ft{display:flex;justify-content:flex-end;gap:10px;margin-top:18px}
+.dl{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}.dl span{display:block;color:var(--mt);font-size:12px}
+#ts{position:fixed;right:20px;bottom:20px;display:flex;flex-direction:column;gap:10px;z-index:200}
+.t{background:var(--card);border:1px solid var(--bd);border-left:4px solid var(--ok);padding:12px 16px;border-radius:10px;box-shadow:var(--sh);animation:fi .25s;max-width:340px;font-weight:600}
+.t.wn{border-left-color:var(--wn)}.t.er{border-left-color:var(--er)}
+#bd{display:none;position:fixed;inset:0;background:rgba(10,18,40,.45);z-index:25}
+.tt{font-size:15px}
+@media(max-width:900px){#sb{transform:translateX(-100%);width:248px!important}body.mo #sb{transform:none}body.mo #bd{display:block}#app,body.col #app{margin-left:0}body.col .lb{display:inline}body.col .nb{display:inline}main{padding:16px}header{padding:0 14px}.dd{position:fixed;right:10px;left:10px;width:auto;top:70px}.sr .dd{position:absolute;left:0;right:0;top:44px}.g2c{grid-template-columns:1fr}}
+@media(max-width:600px){.g2,.dl{grid-template-columns:1fr}.tb input,.tb select{max-width:none}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<aside id="sb">
+  <div class="logo"><i id="lg"></i><span class="lb">Лумина</span></div>
+  <nav id="nav"></nav>
+  <div class="pf"><div class="av">МГ</div><div class="lb"><b>Мартин Георгиев</b><small style="display:block">Администратор</small></div></div>
+</aside>
+<div id="bd" onclick="document.body.classList.remove('mo')"></div>
+<div id="app">
+  <header>
+    <button class="ib" id="mn" aria-label="Мени" onclick="tmenu()"></button>
+    <div class="sr"><span id="si"></span><input id="gsi" placeholder="Пребарај производи, нарачки, купувачи…" oninput="gs(this.value)" autocomplete="off"><div class="dd" id="gsd"></div></div>
+    <span style="flex:1"></span>
+    <button class="ib" id="dk" aria-label="Темна тема" onclick="dark()"></button>
+    <div class="rel"><button class="ib" id="bl" aria-label="Известувања" onclick="dd(event,'nd')"></button><div class="dd" id="nd"></div></div>
+    <div class="rel"><button class="av" onclick="dd(event,'pd')">МГ</button>
+      <div class="dd" id="pd" style="width:230px"><div class="it"><b>Мартин Георгиев</b><small>martin@lumina.mk</small></div>
+      <button onclick="toast('Профилот е во подготовка')">Мој профил</button><button onclick="toast('Поставките се во подготовка')">Поставки</button>
+      <button onclick="rst()" style="color:var(--er)">Ресетирај ги податоците</button><button onclick="toast('Одјавени сте (демо)')">Одјави се</button></div></div>
+  </header>
+  <main id="main"></main>
+</div>
+<div id="ov" onmousedown="if(event.target==this)closeM()"><div id="md"><div class="mh"><h3 id="mt"></h3><button class="ib" onclick="closeM()" id="mx"></button></div><div id="mb"></div></div></div>
+<div id="ts"></div>
+<script>
+/* ---------- Helpers ---------- */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const IC={home:'<path d="M3 11l9-8 9 8v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/>',bag:'<path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4zM3 6h18M16 10a4 4 0 0 1-8 0"/>',box:'<path d="M21 8l-9-5-9 5v8l9 5 9-5zM3 8l9 5 9-5M12 13v8"/>',users:'<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/><circle cx="9" cy="7" r="4"/>',layers:'<path d="M12 2L2 7l10 5 10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>',chart:'<path d="M18 20V10M12 20V4M6 20v-6"/>',bell:'<path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/>',search:'<circle cx="11" cy="11" r="8"/><path d="M21 21l-4.3-4.3"/>',plus:'<path d="M12 5v14M5 12h14"/>',edit:'<path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',trash:'<path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/>',moon:'<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>',menu:'<path d="M3 6h18M3 12h18M3 18h18"/>',x:'<path d="M18 6L6 18M6 6l12 12"/>',eye:'<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/>',money:'<path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>',alert:'<path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0zM12 9v4M12 17h.01"/>',refresh:'<path d="M23 4v6h-6M1 20v-6h6M3.5 9a9 9 0 0 1 14.9-3.4L23 10M1 14l4.6 4.4A9 9 0 0 0 20.5 15"/>',img:'<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/>'};
+const ic=(n,s=18)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${IC[n]}</svg>`;
+const fmt=n=>Math.round(n).toLocaleString('de-DE')+' ден.';
+const num=n=>Math.round(n).toLocaleString('de-DE');
+const iso=t=>new Date(t).toISOString().slice(0,10);
+const dmy=s=>s.slice(0,10).split('-').reverse().join('.');
+const dm=s=>s.slice(8,10)+'.'+s.slice(5,7);
+const pc=v=>(v>=0?'+':'−')+Math.abs(v).toFixed(1).replace('.',',')+'%';
+const opt=(v,t,s)=>`<option value="${v}" ${v==s?'selected':''}>${esc(t)}</option>`;
+const ST=['Нова','Потврдена','Платена','Во подготовка','Испратена','Доставена','Откажана'];
+const SC=['#2f5bea','#6a5cf0','#0e9aa7','#f08a24','#9b51e0','#16a36a','#e5484d'];
+const PAY=['Картичка','Готовина при достава','Банкарска уплата'];
+const CATS=['Електроника','Облека','Обувки','Додатоци','Дом и градина','Козметика'];
+const SL=['Доволна залиха','Мала залиха','Нема залиха'],SCL=['#16a36a','#f08a24','#e5484d'];
+const badge=(t,c)=>`<span class="b" style="--c:${c}">${t}</span>`;
+const stt=p=>p.stock<=0?2:p.stock<=p.min?1:0;
+const eff=p=>Math.round(p.price*(1-p.disc/100));
+const th=p=>`<div class="th">${p.img?`<img src="${p.img}" alt="">`:(p.em||'📦')}</div>`;
+const empty=(t,s)=>`<div class="empty">${ic('box',34)}<b>${t}</b>${s||''}</div>`;
+
+/* ---------- Data ---------- */
+const PD=[['Безжични слушалки Aura Pro','EL-1001','Електроника','Активно поништување на бучава, 30 часа батерија',4990,10,34,10,'🎧'],['Паметен часовник Pulse S2','EL-1002','Електроника','Следење на здравје, GPS и водоотпорно куќиште',8990,15,6,8,'⌚'],['Кожна торба Skopje Classic','DD-6002','Додатоци','Рачно изработена торба од природна кожа',6490,0,14,5,'👜'],['Патики Run Air 42','OB-2001','Обувки','Лесни патики за трчање со амортизација',4290,0,22,8,'👟'],['Јакна Vardar Winter','OD-3001','Облека','Топла водоотпорна зимска јакна',5990,20,0,5,'🧥'],['Памучна маица Basic','OD-3002','Облека','100% органски памук, кроj за секој ден',790,0,120,30,'👕'],['Керамички шолји сет','DG-4001','Дом и градина','Сет од 4 рачно oбоени шолји',1290,5,48,15,'☕'],['Ароматична свеќа Охрид','DG-4002','Дом и градина','Соева свеќа со мирис на борови иглички',590,0,9,12,'🕯️'],['Серум за лице Vita C','KZ-5001','Козметика','Серум со витамин Ц за блескава кожа',1890,10,40,10,'🧴'],['Сончеви очила Маврово','DD-6001','Додатоци','Поларизирани леќи со UV400 заштита',1990,0,15,6,'🕶️']];
+const CD=[['Марија Стојановска','070 123 456','marija.s@example.mk','Скопје'],['Александар Петровски','071 234 567','aleksandar.p@example.mk','Битола'],['Ана Николовска','072 345 678','ana.n@example.mk','Охрид'],['Борис Јовановски','075 456 789','boris.j@example.mk','Скопје'],['Елена Трајковска','076 567 890','elena.t@example.mk','Куманово'],['Дарко Ристовски','077 678 901','darko.r@example.mk','Тетово'],['Силвија Илиевска','078 789 012','silvija.i@example.mk','Прилеп'],['Горан Митревски','070 890 123','goran.m@example.mk','Штип'],['Теодора Ангелова','071 901 234','teodora.a@example.mk','Скопје'],['Никола Стефановски','072 012 345','nikola.s@example.mk','Велес']];
+function seed(){let s=11;const r=()=>(s=s*16807%2147483647)/2147483647,now=Date.now();
+ const P=PD.map((a,i)=>({id:i+1,name:a[0],sku:a[1],cat:a[2],desc:a[3],price:a[4],disc:a[5],stock:a[6],min:a[7],em:a[8],act:true,u:new Date(now-(i+1)*3e7).toISOString()}));
+ const C=CD.map((a,i)=>({id:i+1,n:a[0],ph:a[1],em:a[2],city:a[3],j:iso(now-Math.floor(r()*300)*864e5)}));
+ const O=[];for(let i=0;i<70;i++){const p=P[r()*P.length|0],q=1+(r()*3|0),ago=Math.floor(Math.pow(r(),1.5)*360);let st=ago>12?(r()<.08?6:5):(r()*5|0);O.push({c:C[r()*C.length|0].id,p:p.id,q,d:iso(now-ago*864e5),pay:PAY[r()*3|0],st,t:eff(p)*q})}
+ O.sort((a,b)=>a.d<b.d?-1:1).forEach((o,i)=>o.id='ORD-'+(1001+i));O.reverse();
+ const t=new Date().toISOString();
+ return{p:P,c:C,o:O,n:P.filter(p=>stt(p)).map(p=>({m:(stt(p)==2?'Нема залиха: ':'Мала залиха: ')+p.name,t,r:false})),a:[{m:'Системот е подготвен со демо податоци',t}],base:Math.round(P.reduce((s,p)=>s+p.stock,0)*1.026)}}
+const K='lumina_v1';let S;try{S=JSON.parse(localStorage.getItem(K))}catch(e){}S=S||seed();
+function save(){try{localStorage.setItem(K,JSON.stringify(S))}catch(e){toast('Меморијата е полна — сликата е преголема','er')}}
+const pr=id=>S.p.find(p=>p.id==id)||{id:0,name:'(избришан производ)',sku:'—',price:0,disc:0,stock:0,min:0,cat:'—'};
+const cu=id=>S.c.find(c=>c.id==id)||{id:0,n:'(непознат купувач)',ph:'—',em:''};
+const cst=c=>{const os=S.o.filter(o=>o.c==c.id);return{os,n:os.length,sp:os.filter(o=>o.st!=6).reduce((s,o)=>s+o.t,0)}};
+const log=m=>{S.a.unshift({m,t:new Date().toISOString()});S.a.length=Math.min(S.a.length,30)};
+const sum=(a,f)=>a.reduce((s,x)=>s+f(x),0);
+
+/* ---------- UI primitives ---------- */
+function toast(m,t=''){const e=document.createElement('div');e.className='t '+t;e.textContent=m;$('#ts').append(e);setTimeout(()=>e.remove(),3200)}
+function modal(t,h,w){$('#mt').textContent=t;$('#mb').innerHTML=h;$('#md').style.maxWidth=(w||520)+'px';$('#ov').classList.add('on')}
+function closeM(){$('#ov').classList.remove('on')}
+function confirmBox(m,cb){modal('Потврда',`<p>${m}</p><div class="ft"><button class="btn" onclick="closeM()">Откажи</button><button class="btn dn" id="cy">Избриши</button></div>`,420);$('#cy').onclick=()=>{closeM();cb()}}
+function errs(f,o){let ok=true;[...f.elements].forEach(e=>{const s=e.nextElementSibling;if(s&&s.classList.contains('er')){s.textContent=o[e.name]||'';if(o[e.name])ok=false}});return ok}
+function dd(e,id){e.stopPropagation();const o=$('#'+id).classList.contains('on');document.querySelectorAll('.dd').forEach(d=>d.classList.remove('on'));if(!o){$('#'+id).classList.add('on');if(id=='nd')renderN()}}
+document.addEventListener('click',e=>{if(!e.target.closest('.sr'))$('#gsd').classList.remove('on');if(!e.target.closest('.rel'))document.querySelectorAll('.rel .dd').forEach(d=>d.classList.remove('on'))});
+document.addEventListener('keydown',e=>{if(e.key=='Escape'){closeM();document.querySelectorAll('.dd').forEach(d=>d.classList.remove('on'))}});
+function tmenu(){if(innerWidth<=900)document.body.classList.toggle('mo');else{document.body.classList.toggle('col');localStorage.setItem('lcol',document.body.classList.contains('col')?1:'')}}
+function dark(){const d=document.documentElement.dataset.theme=='dark';document.documentElement.dataset.theme=d?'':'dark';localStorage.setItem('ltheme',d?'':'dark');refresh()}
+function rst(){confirmBox('Сите податоци ќе бидат вратени на почетните демо вредности. Продолжи?',()=>{localStorage.removeItem(K);location.reload()})}
+function notify(m){S.n.unshift({m,t:new Date().toISOString(),r:false});S.n.length=Math.min(S.n.length,30);toast(m,'wn')}
+function renderN(){const un=S.n.filter(n=>!n.r).length;$('#nd').innerHTML=`<div class="fx" style="justify-content:space-between;padding:6px 10px"><b>Известувања</b><button class="btn sm" style="width:auto" onclick="S.n.forEach(n=>n.r=true);save();refresh();renderN()">Означи како прочитани</button></div>`+(S.n.length?S.n.map(n=>`<div class="it ${n.r?'':'un'}">${esc(n.m)}<small>${dmy(n.t)} ${n.t.slice(11,16)}</small></div>`).join(''):empty('Нема известувања'))}
+function commit(){save();refresh()}
+function refresh(){V[cur].fill();const un=S.n.filter(n=>!n.r).length,al=S.p.filter(stt).length,nw=S.o.filter(o=>o.st==0).length;
+ $('#bl').innerHTML=ic('bell')+(un?`<span class="dot">${un}</span>`:'');
+ $('#dk').innerHTML=ic('moon');
+ document.querySelectorAll('#nav .nb').forEach(b=>{const v=b.dataset.v;const n=v=='inv'?al:nw;b.textContent=n;b.style.display=n?'':'none'})}
+
+/* ---------- Business logic ---------- */
+function setStock(p,q,quiet){const old=stt(p);p.stock=Math.max(0,q);p.u=new Date().toISOString();const s=stt(p);
+ if(!quiet){log(`Залиха ажурирана: ${p.name} → ${p.stock}`);if(s>old)notify((s==2?'Нема залиха: ':'Достигната минимална залиха: ')+p.name+` (${p.stock} парчиња)`)}}
+function eo(o,sg,quiet){if(o.st!=6){const p=pr(o.p);if(p.id)setStock(p,p.stock+sg*o.q,quiet)}}
+function applyO(o,n){eo(o,1,true);const old={...o};Object.assign(o,n);
+ if(o.st!=6){const p=pr(o.p);if(p.stock<o.q){Object.assign(o,old);eo(o,-1,true);return false}}
+ eo(o,-1);return true}
+
+/* ---------- Charts ---------- */
+const CH={};
+function mk(id,type,L,ds,opt={}){const el=$('#'+id);if(!el||!window.Chart){if(el)el.parentNode.innerHTML=empty('Графиконот не е достапен','Потребна е интернет врска за библиотеката Chart.js');return}
+ CH[id]&&CH[id].destroy();const cs=getComputedStyle(document.documentElement);Chart.defaults.font.family='Manrope,system-ui';Chart.defaults.color=cs.getPropertyValue('--mt').trim();
+ CH[id]=new Chart(el,{type,data:{labels:L,datasets:ds},options:{responsive:true,maintainAspectRatio:false,...opt}})}
+const acc=()=>getComputedStyle(document.documentElement).getPropertyValue('--ac').trim();
+const grd=()=>getComputedStyle(document.documentElement).getPropertyValue('--bd').trim();
+function lineC(id,L,V){mk(id,'line',L,[{label:'Приход',data:V,borderColor:acc(),borderWidth:2.5,fill:true,tension:.35,pointRadius:0,pointHoverRadius:5,backgroundColor:c=>{const a=c.chart.chartArea;if(!a)return;const g=c.chart.ctx.createLinearGradient(0,a.top,0,a.bottom);g.addColorStop(0,'rgba(47,91,234,.28)');g.addColorStop(1,'rgba(47,91,234,0)');return g}}],
+ {interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+fmt(c.parsed.y)}}},scales:{x:{grid:{display:false}},y:{beginAtZero:true,grid:{color:grd()},ticks:{callback:v=>v>=1000?v/1000+'k':v}}}})}
+function ser(from,to){const a=new Date(from).getTime(),z=new Date(to).getTime(),n=Math.round((z-a)/864e5)+1,bs=n<=31?1:n<=120?7:30,L=[],V=[];
+ for(let i=0;i<n;i+=bs){const s=iso(a+i*864e5),e=iso(Math.min(a+(i+bs)*864e5,z+864e5));L.push(dm(s));V.push(sum(S.o.filter(o=>o.st!=6&&o.d>=s&&o.d<e),o=>o.t))}return{L,V}}
+const range=d=>[iso(Date.now()-(d-1)*864e5),iso(Date.now())];
+const rev=(f,t)=>sum(S.o.filter(o=>o.st!=6&&o.d>=f&&o.d<=t),o=>o.t);
+
+/* ---------- Views ---------- */
+const F={o:{q:'',st:'',from:'',to:'',k:'d',d:-1,lim:15},p:{q:'',cat:'',sort:'name'},i:{q:'',cat:'',st:''},c:{q:''},per:30,an:{from:range(30)[0],to:range(30)[1]}};
+const PER=[[7,'Последни 7 дена'],[30,'Последни 30 дена'],[90,'Последни 90 дена'],[365,'Последна година']];
+const catSel=(v,fn)=>`<select onchange="${fn}"><option value="">Сите категории</option>${CATS.map(c=>opt(c,c,v)).join('')}</select>`;
+const kpi=(l,v,i,p,sub)=>`<div class="card"><div class="kc"><span>${l}</span><i>${ic(i,20)}</i></div><div class="kv">${v}</div><small class="${p>=0?'up':'dw'}"><b>${pc(p)}</b></small> <small class="mt">${sub}</small></div>`;
+const V={};
+V.dash={html:()=>`<div class="ph"><div><h1>Преглед</h1><p>Добредојдовте назад — ова е состојбата на вашата продавница денес.</p></div></div>
+<div class="kp" id="kp"></div>
+<div class="card"><div class="ch"><h3>Приход од продажба</h3><div class="seg">${PER.map(p=>`<button class="${p[0]==F.per?'on':''}" onclick="F.per=${p[0]};V.dash.fill();document.querySelectorAll('.seg button').forEach(b=>b.classList.toggle('on',b.textContent=='${p[1]}'))">${p[1]}</button>`).join('')}</div></div><div class="cv"><canvas id="c1"></canvas></div></div>
+<div class="g2c"><div class="card"><h3>Скорешни нарачки</h3><div id="d1"></div></div><div class="card"><h3>Најпродавани производи</h3><div id="d2"></div></div>
+<div class="card"><h3>Предупредувања за мала залиха</h3><div id="d3"></div></div><div class="card"><h3>Скорешни активности</h3><div id="d4"></div></div></div>`,
+fill(){const ok=S.o.filter(o=>o.st!=6),n=Date.now(),d=k=>iso(n-k*864e5);
+ const r1=rev(d(29),d(0)),r0=rev(d(59),d(30)),o1=S.o.filter(o=>o.st!=6&&o.d>=d(29)).length,o0=S.o.filter(o=>o.st!=6&&o.d>=d(59)&&o.d<d(29)).length;
+ const nc=S.c.filter(c=>c.j>=d(29)).length,tot=sum(S.p,p=>p.stock);
+ $('#kp').innerHTML=kpi('Вкупен приход',fmt(sum(ok,o=>o.t)),'money',r0?(r1-r0)/r0*100:0,'спрема претходни 30 дена')+kpi('Вкупен број на нарачки',num(S.o.length),'bag',o0?(o1-o0)/o0*100:0,'спрема претходни 30 дена')+kpi('Вкупен број на купувачи',num(S.c.length),'users',nc/Math.max(1,S.c.length-nc)*100,'нови во 30 дена')+kpi('Вкупна состојба на залихи',num(tot)+' парч.','layers',(tot-S.base)/S.base*100,'спрема почетна состојба');
+ const [f,t]=range(F.per),s=ser(f,t);lineC('c1',s.L,s.V);
+ $('#d1').innerHTML=S.o.slice().sort((a,b)=>a.d<b.d?1:-1).slice(0,5).map(o=>`<div class="li"><div class="th">${ic('bag',20)}</div><div><b>${esc(cu(o.c).n)}</b><small>${o.id} · ${dmy(o.d)}</small></div><div style="text-align:right"><b>${fmt(o.t)}</b><br>${badge(ST[o.st],SC[o.st])}</div></div>`).join('')||empty('Нема нарачки');
+ const m={};ok.forEach(o=>{m[o.p]=m[o.p]||{u:0,r:0};m[o.p].u+=o.q;m[o.p].r+=o.t});
+ $('#d2').innerHTML=Object.entries(m).sort((a,b)=>b[1].u-a[1].u).slice(0,5).map(([id,v])=>{const p=pr(id);return`<div class="li">${th(p)}<div><b>${esc(p.name)}</b><small>${v.u} продадени</small></div><b>${fmt(v.r)}</b></div>`}).join('')||empty('Нема продажба');
+ const lo=S.p.filter(stt).sort((a,b)=>a.stock-b.stock);
+ $('#d3').innerHTML=lo.map(p=>`<div class="li">${th(p)}<div><b>${esc(p.name)}</b><small>${p.stock} од мин. ${p.min}</small></div>${badge(SL[stt(p)],SCL[stt(p)])}<button class="btn sm" onclick="rs(${p.id})">Дополни</button></div>`).join('')||empty('Сè е во ред','Сите производи имаат доволна залиха');
+ $('#d4').innerHTML=S.a.slice(0,6).map(a=>`<div class="li"><div class="th" style="width:34px;height:34px">${ic('refresh',16)}</div><div><span>${esc(a.m)}</span><small>${dmy(a.t)} ${a.t.slice(11,16)}</small></div></div>`).join('')}};
+
+const sv=(o,k)=>({id:o.id,d:o.d,c:cu(o.c).n,p:pr(o.p).name,q:o.q,t:o.t,pay:o.pay,st:o.st})[k];
+V.orders={html:()=>{const f=F.o;return`<div class="ph"><div><h1>Нарачки</h1><p>Следете и управувајте со сите нарачки.</p></div><button class="btn pr" onclick="oForm()">${ic('plus',16)} Нова нарачка</button></div>
+<div class="card"><div class="tb"><input placeholder="Пребарај нарачка, купувач, производ…" value="${esc(f.q)}" oninput="F.o.q=this.value;F.o.lim=15;V.orders.fill()"><select onchange="F.o.st=this.value;F.o.lim=15;V.orders.fill()"><option value="">Сите статуси</option>${ST.map((s,i)=>opt(i,s,f.st)).join('')}</select><input type="date" title="Од датум" value="${f.from}" onchange="F.o.from=this.value;V.orders.fill()"><input type="date" title="До датум" value="${f.to}" onchange="F.o.to=this.value;V.orders.fill()"></div>
+<div class="tw"><table><thead><tr>${[['id','Број на нарачка'],['d','Датум'],['c','Купувач'],['','Контакт'],['p','Производ'],['q','Количина'],['t','Вкупна сума'],['pay','Начин на плаќање'],['st','Статус']].map(([k,l])=>`<th ${k?`onclick="srt('${k}')"`:''}>${l}<span id="ar_${k}"></span></th>`).join('')}<th>Акции</th></tr></thead><tbody id="ob"></tbody></table></div><div id="om" style="text-align:center;margin-top:14px"></div></div>`},
+fill(){const f=F.o,q=f.q.toLowerCase();let a=S.o.filter(o=>(!q||(o.id+cu(o.c).n+cu(o.c).ph+pr(o.p).name).toLowerCase().includes(q))&&(f.st===''||o.st==f.st)&&(!f.from||o.d>=f.from)&&(!f.to||o.d<=f.to));
+ a.sort((x,y)=>{const u=sv(x,f.k),v=sv(y,f.k);return(u>v?1:u<v?-1:0)*f.d});
+ document.querySelectorAll('[id^=ar_]').forEach(e=>e.textContent=e.id=='ar_'+f.k?(f.d>0?' ▲':' ▼'):'');
+ $('#ob').innerHTML=a.slice(0,f.lim).map(o=>{const c=cu(o.c),p=pr(o.p);return`<tr><td class="nw"><b>${o.id}</b></td><td class="nw">${dmy(o.d)}</td><td class="nw">${esc(c.n)}</td><td class="nw">${esc(c.ph)}</td><td>${esc(p.name)}</td><td>${o.q}</td><td class="nw"><b>${fmt(o.t)}</b></td><td class="nw">${o.pay}</td><td>${badge(ST[o.st],SC[o.st])}</td><td class="nw"><button class="ib" title="Детали" onclick="oDet('${o.id}')">${ic('eye',17)}</button><button class="ib" title="Уреди" onclick="oForm('${o.id}')">${ic('edit',17)}</button><button class="ib d" title="Избриши" onclick="oDel('${o.id}')">${ic('trash',17)}</button></td></tr>`}).join('')||`<tr><td colspan="10">${empty('Нема пронајдени нарачки','Пробајте со друго пребарување или филтер')}</td></tr>`;
+ $('#om').innerHTML=a.length>f.lim?`<button class="btn" onclick="F.o.lim+=15;V.orders.fill()">Прикажи повеќе (${a.length-f.lim})</button>`:''}};
+function srt(k){const f=F.o;f.d=f.k==k?-f.d:1;f.k=k;V.orders.fill()}
+function oDet(id){const o=S.o.find(x=>x.id==id),c=cu(o.c),p=pr(o.p);
+ modal('Нарачка '+o.id,`<div class="dl"><div><span>Датум</span><b>${dmy(o.d)}</b></div><div><span>Купувач</span><b>${esc(c.n)}</b></div><div><span>Контакт</span><b>${esc(c.ph)}</b></div><div><span>Плаќање</span><b>${o.pay}</b></div><div><span>Производ</span><b>${esc(p.name)}</b></div><div><span>Количина</span><b>${o.q}</b></div><div><span>Вкупна сума</span><b>${fmt(o.t)}</b></div><div><span>Статус</span>${badge(ST[o.st],SC[o.st])}</div></div>
+ <label>Промени статус<select onchange="chSt('${id}',this.value)">${ST.map((s,i)=>opt(i,s,o.st)).join('')}</select></label><div class="ft"><button class="btn" onclick="closeM()">Затвори</button><button class="btn pr" onclick="oForm('${id}')">Уреди</button></div>`)}
+function chSt(id,v){const o=S.o.find(x=>x.id==id);if(!applyO(o,{st:+v})){toast('Нема доволно залиха за оваа нарачка','er')}else{log(`Нарачка ${id}: статус „${ST[o.st]}“`);toast('Статусот е ажуриран');commit()}oDet(id)}
+function tot(){const f=$('#mb form').elements,p=pr(f.p.value);$('#tt').textContent=fmt(eff(p)*(+f.q.value||0))}
+function oForm(id){if(!S.p.length||!S.c.length)return toast('Прво додадете производ и купувач','er');
+ const o=id?S.o.find(x=>x.id==id):{c:S.c[0].id,p:S.p[0].id,q:1,d:iso(Date.now()),pay:PAY[0],st:0};
+ modal(id?'Уреди нарачка '+id:'Нова нарачка',`<form onsubmit="return savO(event,'${id||''}')" novalidate><div class="g2">
+ <label>Купувач<select name="c">${S.c.map(c=>opt(c.id,c.n,o.c)).join('')}</select></label>
+ <label>Производ<select name="p" onchange="tot()">${S.p.map(p=>opt(p.id,p.name+' — '+fmt(eff(p)),o.p)).join('')}</select></label>
+ <label>Количина<input name="q" type="number" min="1" value="${o.q}" oninput="tot()"><i class="er"></i></label>
+ <label>Датум<input name="d" type="date" value="${o.d}"><i class="er"></i></label>
+ <label>Начин на плаќање<select name="pay">${PAY.map(x=>opt(x,x,o.pay)).join('')}</select></label>
+ <label>Статус<select name="st">${ST.map((s,i)=>opt(i,s,o.st)).join('')}</select></label></div>
+ <p class="tt">Вкупно: <b id="tt"></b></p><div class="ft"><button type="button" class="btn" onclick="closeM()">Откажи</button><button class="btn pr">Зачувај нарачка</button></div></form>`,580);tot()}
+function savO(e,id){e.preventDefault();const f=e.target.elements,q=+f.q.value,E={};
+ if(!Number.isInteger(q)||q<1)E.q='Внесете количина од најмалку 1';if(!f.d.value)E.d='Изберете датум';if(!errs(e.target,E))return false;
+ const n={c:+f.c.value,p:+f.p.value,q,d:f.d.value,pay:f.pay.value,st:+f.st.value,t:eff(pr(f.p.value))*q};let o;
+ if(id){o=S.o.find(x=>x.id==id)}else{o={id:'ORD-'+(Math.max(1000,...S.o.map(x=>+x.id.slice(4)))+1),...n,st:6};S.o.unshift(o)}
+ if(!applyO(o,n)){if(!id)S.o.shift();errs(e.target,{q:'Нема доволно залиха за овој производ'});return false}
+ log(`${id?'Изменета':'Нова'} нарачка ${o.id}`);closeM();toast(id?'Нарачката е ажурирана':'Нарачката е додадена');commit();return false}
+function oDel(id){confirmBox(`Дали сте сигурни дека сакате да ја избришете нарачката ${id}?`,()=>{const o=S.o.find(x=>x.id==id);eo(o,1,true);S.o=S.o.filter(x=>x!==o);log('Избришана нарачка '+id);toast('Нарачката е избришана');commit()})}
+
+V.products={html:()=>{const f=F.p;return`<div class="ph"><div><h1>Производи</h1><p>Управувајте со каталогот на производи.</p></div><button class="btn pr" onclick="pForm()">${ic('plus',16)} Нов производ</button></div>
+<div class="card"><div class="tb"><input placeholder="Пребарај по назив или шифра…" value="${esc(f.q)}" oninput="F.p.q=this.value;V.products.fill()">${catSel(f.cat,"F.p.cat=this.value;V.products.fill()")}<select onchange="F.p.sort=this.value;V.products.fill()">${[['name','Сортирај: назив А–Ш'],['pa','Цена: најниска прво'],['pd','Цена: највисока прво']].map(x=>opt(x[0],x[1],f.sort)).join('')}</select></div>
+<div class="tw"><table><thead><tr><th>Слика</th><th>Назив и опис</th><th>Шифра</th><th>Категорија</th><th>Цена</th><th>Попуст</th><th>Достапност</th><th>Статус</th><th>Акции</th></tr></thead><tbody id="pb"></tbody></table></div></div>`},
+fill(){const f=F.p,q=f.q.toLowerCase();const a=S.p.filter(p=>(!q||(p.name+p.sku).toLowerCase().includes(q))&&(!f.cat||p.cat==f.cat));
+ a.sort((x,y)=>f.sort=='pa'?eff(x)-eff(y):f.sort=='pd'?eff(y)-eff(x):x.name.localeCompare(y.name,'mk'));
+ $('#pb').innerHTML=a.map(p=>`<tr><td>${th(p)}</td><td style="min-width:240px"><b>${esc(p.name)}</b><small class="mt" style="display:block">${esc(p.desc)}</small></td><td class="nw">${esc(p.sku)}</td><td class="nw">${esc(p.cat)}</td><td class="nw"><b>${fmt(eff(p))}</b>${p.disc?`<small class="mt" style="display:block"><s>${fmt(p.price)}</s></small>`:''}</td><td>${p.disc?badge('−'+p.disc+'%','#e5484d'):'—'}</td><td class="nw">${badge(p.stock>0?'Достапен · '+p.stock:'Недостапен',SCL[stt(p)])}</td><td><button class="sw ${p.act?'on':''}" title="${p.act?'Активен':'Неактивен'}" onclick="tg(${p.id})" aria-label="Активен / Неактивен"></button> <small class="mt">${p.act?'Активен':'Неактивен'}</small></td><td class="nw"><button class="ib" onclick="pForm(${p.id})">${ic('edit',17)}</button><button class="ib d" onclick="pDel(${p.id})">${ic('trash',17)}</button></td></tr>`).join('')||`<tr><td colspan="9">${empty('Нема пронајдени производи','Додадете нов производ или променете го филтерот')}</td></tr>`}};
+function tg(id){const p=pr(id);p.act=!p.act;log(`${p.name}: ${p.act?'активиран':'деактивиран'}`);toast(p.act?'Производот е активиран':'Производот е деактивиран');commit()}
+let tImg;
+function pForm(id){tImg=undefined;const p=id?pr(id):{name:'',sku:'',cat:CATS[0],desc:'',price:'',disc:0,stock:0,min:5,act:true};
+ modal(id?'Уреди производ':'Нов производ',`<form onsubmit="return savP(event,${id||0})" novalidate><div class="g2">
+ <label>Назив на производ<input name="name" value="${esc(p.name)}"><i class="er"></i></label><label>Шифра на производ<input name="sku" value="${esc(p.sku)}"><i class="er"></i></label>
+ <label>Категорија<select name="cat">${CATS.map(c=>opt(c,c,p.cat)).join('')}</select></label><label>Слика на производ<input name="img" type="file" accept="image/*" onchange="upl(this)"><i class="er"></i></label>
+ <label>Цена (ден.)<input name="price" type="number" min="1" value="${p.price}"><i class="er"></i></label><label>Попуст (%)<input name="disc" type="number" min="0" max="90" value="${p.disc}"><i class="er"></i></label>
+ <label>Количина на залиха<input name="stock" type="number" min="0" value="${p.stock}"><i class="er"></i></label><label>Минимална количина<input name="min" type="number" min="0" value="${p.min}"><i class="er"></i></label></div>
+ <label>Опис<textarea name="desc" rows="3">${esc(p.desc)}</textarea></label><label class="fx" style="margin-top:12px"><input type="checkbox" name="act" style="width:auto;margin:0" ${p.act?'checked':''}> Активен производ</label>
+ <div class="ft"><button type="button" class="btn" onclick="closeM()">Откажи</button><button class="btn pr">Зачувај производ</button></div></form>`,600)}
+function upl(i){const f=i.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const c=document.createElement('canvas'),s=Math.min(1,160/Math.max(im.width,im.height));c.width=im.width*s;c.height=im.height*s;c.getContext('2d').drawImage(im,0,0,c.width,c.height);tImg=c.toDataURL('image/jpeg',.8);toast('Сликата е прикачена')};im.src=r.result};r.readAsDataURL(f)}
+function savP(e,id){e.preventDefault();const f=e.target.elements,E={},v={name:f.name.value.trim(),sku:f.sku.value.trim(),cat:f.cat.value,desc:f.desc.value.trim(),price:+f.price.value,disc:+f.disc.value||0,stock:+f.stock.value,min:+f.min.value,act:f.act.checked};
+ if(!v.name)E.name='Внесете назив';if(!v.sku)E.sku='Внесете шифра';else if(S.p.some(p=>p.sku.toLowerCase()==v.sku.toLowerCase()&&p.id!=id))E.sku='Шифрата веќе постои';
+ if(!(v.price>0))E.price='Цената мора да е поголема од 0';if(v.disc<0||v.disc>90)E.disc='Попустот е од 0 до 90';if(!(v.stock>=0)||!Number.isInteger(v.stock))E.stock='Внесете цел број ≥ 0';if(!(v.min>=0))E.min='Внесете број ≥ 0';
+ if(!errs(e.target,E))return false;
+ if(id){const p=pr(id),os=p.stock;Object.assign(p,v);if(tImg)p.img=tImg;if(os!=v.stock){p.stock=os;setStock(p,v.stock)}}
+ else{const p={id:Math.max(0,...S.p.map(x=>x.id))+1,...v,img:tImg,em:'📦',u:new Date().toISOString()};S.p.push(p);if(stt(p))notify('Мала залиха: '+p.name)}
+ log((id?'Изменет':'Нов')+' производ: '+v.name);closeM();toast(id?'Производот е ажуриран':'Производот е додаден');commit();return false}
+function pDel(id){confirmBox(`Дали сте сигурни дека сакате да го избришете производот „${esc(pr(id).name)}“?`,()=>{log('Избришан производ: '+pr(id).name);S.p=S.p.filter(p=>p.id!=id);toast('Производот е избришан');commit()})}
+
+V.inv={html:()=>{const f=F.i;return`<div class="ph"><div><h1 class="big">ПРОИЗВОДИ НА ЗАЛИХА</h1><p>Следете ги количините, дополнете залиха и добивајте предупредувања.</p></div></div>
+<div id="ia"></div><div class="kp" id="ik"></div>
+<div class="card"><div class="tb"><input placeholder="Пребарај производ или шифра…" value="${esc(f.q)}" oninput="F.i.q=this.value;V.inv.fill()">${catSel(f.cat,"F.i.cat=this.value;V.inv.fill()")}<select onchange="F.i.st=this.value;V.inv.fill()"><option value="">Сите статуси</option>${SL.map((s,i)=>opt(i,s,f.st)).join('')}</select></div>
+<div class="tw"><table><thead><tr><th>Фотографија на производот</th><th>Име на производот</th><th>Шифра на производот</th><th>Категорија</th><th>Количина на залиха</th><th>Минимална количина</th><th>Статус на залиха</th><th>Последно ажурирање</th><th>Акции</th></tr></thead><tbody id="ib"></tbody></table></div></div>`},
+fill(){const f=F.i,q=f.q.toLowerCase(),lo=S.p.filter(p=>stt(p)==1).length,out=S.p.filter(p=>stt(p)==2).length;
+ $('#ia').innerHTML=lo+out?`<div class="alert">${ic('alert')} ${lo?lo+' производи достигнаа минимална залиха. ':''}${out?out+' производи се распродадени.':''}</div>`:'';
+ const k=(l,v,i,c)=>`<div class="card"><div class="kc"><span>${l}</span><i style="color:${c};background:color-mix(in srgb,${c} 14%,transparent)">${ic(i,20)}</i></div><div class="kv">${v}</div></div>`;
+ $('#ik').innerHTML=k('Вкупно производи на залиха',S.p.filter(p=>p.stock>0).length+' <small class="mt" style="font-size:14px">('+num(sum(S.p,p=>p.stock))+' парч.)</small>','layers','#2f5bea')+k('Производи со мала залиха',lo,'alert','#f08a24')+k('Производи без залиха',out,'box','#e5484d');
+ const a=S.p.filter(p=>(!q||(p.name+p.sku).toLowerCase().includes(q))&&(!f.cat||p.cat==f.cat)&&(f.st===''||stt(p)==f.st)).sort((x,y)=>stt(y)-stt(x)||x.stock-y.stock);
+ $('#ib').innerHTML=a.map(p=>{const s=stt(p),w=Math.min(100,p.stock/Math.max(1,p.min*3)*100);return`<tr><td>${th(p)}</td><td style="min-width:180px"><b>${esc(p.name)}</b></td><td class="nw">${esc(p.sku)}</td><td class="nw">${esc(p.cat)}</td><td><div class="qc"><input type="number" min="0" value="${p.stock}" aria-label="Количина" onchange="stk(${p.id},this.value)"><div class="bar"><i style="width:${w}%;background:${SCL[s]}"></i></div></div></td><td><input class="mi" type="number" min="0" value="${p.min}" aria-label="Минимална количина" onchange="mnq(${p.id},this.value)"></td><td>${badge(SL[s],SCL[s])}</td><td class="nw">${dmy(p.u)} ${p.u.slice(11,16)}</td><td class="nw"><button class="btn sm" onclick="rs(${p.id})">${ic('refresh',14)} Дополни</button></td></tr>`}).join('')||`<tr><td colspan="9">${empty('Нема производи','Променете го пребарувањето или филтерот')}</td></tr>`}};
+function stk(id,v){const p=pr(id),n=parseInt(v);if(isNaN(n)||n<0){toast('Внесете цел број ≥ 0','er');return V.inv.fill()}setStock(p,n);toast('Залихата е ажурирана');commit()}
+function mnq(id,v){const p=pr(id),n=parseInt(v),o=stt(p);if(isNaN(n)||n<0){toast('Внесете цел број ≥ 0','er');return V.inv.fill()}p.min=n;p.u=new Date().toISOString();if(stt(p)>o)notify(`Достигната минимална залиха: ${p.name} (${p.stock} парчиња)`);toast('Минималната количина е зачувана');commit()}
+function rs(id){const p=pr(id);modal('Дополни залиха',`<form onsubmit="return savR(event,${id})" novalidate><div class="fx" style="margin-bottom:14px">${th(p)}<div><b>${esc(p.name)}</b><small class="mt" style="display:block">Моментална залиха: ${p.stock} · Минимум: ${p.min}</small></div></div><label>Количина за додавање<input name="q" type="number" min="1" value="${Math.max(10,p.min*2-p.stock)}"><i class="er"></i></label><div class="ft"><button type="button" class="btn" onclick="closeM()">Откажи</button><button class="btn pr">Дополни залиха</button></div></form>`,420)}
+function savR(e,id){e.preventDefault();const q=+e.target.elements.q.value;if(!errs(e.target,Number.isInteger(q)&&q>0?{}:{q:'Внесете цел број поголем од 0'}))return false;const p=pr(id);setStock(p,p.stock+q);closeM();toast(`Залихата е дополнета: +${q} · ${p.name}`);commit();return false}
+
+V.cust={html:()=>`<div class="ph"><div><h1>Купувачи</h1><p>Преглед на купувачите и нивната историја на купување.</p></div><button class="btn pr" onclick="cForm()">${ic('plus',16)} Нов купувач</button></div>
+<div class="card"><div class="tb"><input placeholder="Пребарај купувач, телефон, е-пошта…" value="${esc(F.c.q)}" oninput="F.c.q=this.value;V.cust.fill()"></div><div class="tw"><table><thead><tr><th>Име и презиме</th><th>Контакт</th><th>Број на нарачки</th><th>Вкупно потрошени средства</th><th>Историја на купувања</th><th>Акции</th></tr></thead><tbody id="cb"></tbody></table></div></div>`,
+fill(){const q=F.c.q.toLowerCase();$('#cb').innerHTML=S.c.filter(c=>!q||(c.n+c.ph+c.em+c.city).toLowerCase().includes(q)).map(c=>{const s=cst(c),l=s.os[0];return`<tr><td><div class="fx"><span class="av" style="width:36px;height:36px">${esc(c.n.split(' ').map(x=>x[0]).join('').slice(0,2))}</span><div><b>${esc(c.n)}</b><small class="mt" style="display:block">${esc(c.city)}</small></div></div></td><td class="nw">${esc(c.ph)}<small class="mt" style="display:block">${esc(c.em)}</small></td><td>${s.n}</td><td class="nw"><b>${fmt(s.sp)}</b></td><td class="nw"><button class="btn sm" onclick="cDet(${c.id})">${ic('eye',14)} Историја${l?' · '+dmy(s.os.slice().sort((a,b)=>a.d<b.d?1:-1)[0].d):''}</button></td><td class="nw"><button class="ib" onclick="cForm(${c.id})">${ic('edit',17)}</button></td></tr>`}).join('')||`<tr><td colspan="6">${empty('Нема пронајдени купувачи')}</td></tr>`}};
+function cDet(id){const c=cu(id),s=cst(c);modal(c.n,`<div class="dl"><div><span>Телефон</span><b>${esc(c.ph)}</b></div><div><span>Е-пошта</span><b>${esc(c.em)||'—'}</b></div><div><span>Град</span><b>${esc(c.city)||'—'}</b></div><div><span>Нарачки · Потрошено</span><b>${s.n} · ${fmt(s.sp)}</b></div></div><h3 style="margin-bottom:8px">Историја на купувања</h3><div class="tw"><table><thead><tr><th>Нарачка</th><th>Датум</th><th>Производ</th><th>Кол.</th><th>Сума</th><th>Статус</th></tr></thead><tbody>${s.os.slice().sort((a,b)=>a.d<b.d?1:-1).map(o=>`<tr><td>${o.id}</td><td class="nw">${dmy(o.d)}</td><td>${esc(pr(o.p).name)}</td><td>${o.q}</td><td class="nw">${fmt(o.t)}</td><td>${badge(ST[o.st],SC[o.st])}</td></tr>`).join('')||`<tr><td colspan="6">${empty('Нема нарачки')}</td></tr>`}</tbody></table></div><div class="ft"><button class="btn" onclick="closeM()">Затвори</button><button class="btn pr" onclick="cForm(${id})">Уреди податоци</button></div>`,720)}
+function cForm(id){const c=id?cu(id):{n:'',ph:'',em:'',city:''};modal(id?'Уреди купувач':'Нов купувач',`<form onsubmit="return savC(event,${id||0})" novalidate><div class="g2"><label>Име и презиме<input name="n" value="${esc(c.n)}"><i class="er"></i></label><label>Телефон<input name="ph" value="${esc(c.ph)}"><i class="er"></i></label><label>Е-пошта<input name="em" value="${esc(c.em)}"><i class="er"></i></label><label>Град<input name="city" value="${esc(c.city)}"><i class="er"></i></label></div><div class="ft"><button type="button" class="btn" onclick="closeM()">Откажи</button><button class="btn pr">Зачувај</button></div></form>`)}
+function savC(e,id){e.preventDefault();const f=e.target.elements,v={n:f.n.value.trim(),ph:f.ph.value.trim(),em:f.em.value.trim(),city:f.city.value.trim()},E={};
+ if(v.n.split(/\s+/).length<2)E.n='Внесете име и презиме';if(v.ph.replace(/\D/g,'').length<8)E.ph='Внесете валиден телефонски број';if(v.em&&!/^\S+@\S+\.\S+$/.test(v.em))E.em='Невалидна е-пошта';
+ if(!errs(e.target,E))return false;if(id)Object.assign(cu(id),v);else S.c.push({id:Math.max(0,...S.c.map(x=>x.id))+1,...v,j:iso(Date.now())});
+ log((id?'Изменет':'Нов')+' купувач: '+v.n);closeM();toast('Купувачот е зачуван');commit();return false}
+
+V.an={html:()=>`<div class="ph"><div><h1>Извештаи и аналитика</h1><p>Продажба, перформанси на производите и трендови.</p></div>
+<div class="tb" style="margin:0"><div class="seg">${PER.map(p=>`<button onclick="anP(${p[0]})">${p[1].replace('Последни ','').replace('Последна година','1 година')}</button>`).join('')}</div><input type="date" id="af" value="${F.an.from}" onchange="F.an.from=this.value;V.an.fill()" style="max-width:150px"><input type="date" id="at" value="${F.an.to}" onchange="F.an.to=this.value;V.an.fill()" style="max-width:150px"></div></div>
+<div class="kp" id="ak"></div><div class="g2c" style="margin-bottom:20px"><div class="card"><h3>Трендови на приходот</h3><div class="cv"><canvas id="a1"></canvas></div></div><div class="card"><h3>Најпродавани производи</h3><div class="cv"><canvas id="a2"></canvas></div></div></div>
+<div class="g2c" style="grid-template-columns:1fr 2fr"><div class="card"><h3>Приход по категорија</h3><div class="cv"><canvas id="a3"></canvas></div></div><div class="card"><h3>Перформанси на производите</h3><div class="tw" id="a4"></div></div></div>`,
+fill(){const{from:f,to:t}=F.an;if(!f||!t||f>t){$('#ak').innerHTML=empty('Изберете валиден период');return}
+ const a=S.o.filter(o=>o.st!=6&&o.d>=f&&o.d<=t),r=sum(a,o=>o.t),m={},cat={};
+ a.forEach(o=>{const p=pr(o.p);m[o.p]=m[o.p]||{u:0,r:0};m[o.p].u+=o.q;m[o.p].r+=o.t;cat[p.cat]=(cat[p.cat]||0)+o.t});
+ const k=(l,v,i)=>`<div class="card"><div class="kc"><span>${l}</span><i>${ic(i,20)}</i></div><div class="kv">${v}</div></div>`;
+ $('#ak').innerHTML=k('Вкупни приходи',fmt(r),'money')+k('Број на нарачки',a.length,'bag')+k('Просечна вредност на нарачка',fmt(a.length?r/a.length:0),'chart')+k('Продадени парчиња',num(sum(a,o=>o.q)),'box');
+ const s=ser(f,t);lineC('a1',s.L,s.V);
+ const top=Object.entries(m).sort((x,y)=>y[1].r-x[1].r),tp=top.slice(0,6);
+ mk('a2','bar',tp.map(x=>pr(x[0]).name.split(' ').slice(0,2).join(' ')),[{data:tp.map(x=>x[1].r),backgroundColor:acc(),borderRadius:6}],{indexAxis:'y',plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+fmt(c.parsed.x)}}},scales:{x:{grid:{color:grd()}},y:{grid:{display:false}}}});
+ mk('a3','doughnut',Object.keys(cat),[{data:Object.values(cat),backgroundColor:['#2f5bea','#6a5cf0','#0e9aa7','#f08a24','#9b51e0','#16a36a'],borderWidth:0}],{cutout:'65%',plugins:{legend:{position:'bottom'},tooltip:{callbacks:{label:c=>' '+fmt(c.parsed)}}}});
+ $('#a4').innerHTML=top.length?`<table><thead><tr><th>Производ</th><th>Продадени</th><th>Приход</th><th>Удел</th></tr></thead><tbody>${top.map(([id,v])=>`<tr><td><div class="fx">${th(pr(id))}<b>${esc(pr(id).name)}</b></div></td><td>${v.u}</td><td class="nw">${fmt(v.r)}</td><td><div class="bar" style="width:100px"><i style="width:${v.r/r*100}%;background:var(--ac)"></i></div><small class="mt">${(v.r/r*100).toFixed(1).replace('.',',')}%</small></td></tr>`).join('')}</tbody></table>`:empty('Нема продажба во избраниот период')}};
+function anP(d){[F.an.from,F.an.to]=range(d);$('#af').value=F.an.from;$('#at').value=F.an.to;V.an.fill()}
+
+/* ---------- Search, navigation, init ---------- */
+let GR=[];
+function gs(v){const d=$('#gsd');v=v.trim().toLowerCase();if(!v)return d.classList.remove('on');GR=[];
+ S.p.filter(p=>(p.name+p.sku).toLowerCase().includes(v)).slice(0,4).forEach(p=>GR.push(['Производ',p.name,p.sku,'products','p',p.name]));
+ S.o.filter(o=>(o.id+cu(o.c).n).toLowerCase().includes(v)).slice(0,4).forEach(o=>GR.push(['Нарачка',o.id,cu(o.c).n,'orders','o',o.id]));
+ S.c.filter(c=>(c.n+c.ph).toLowerCase().includes(v)).slice(0,4).forEach(c=>GR.push(['Купувач',c.n,c.ph,'cust','c',c.n]));
+ d.innerHTML=GR.map((r,i)=>`<button onclick="gq(${i})"><b>${esc(r[1])}</b><small>${r[0]} · ${esc(r[2])}</small></button>`).join('')||empty('Нема резултати');d.classList.add('on')}
+function gq(i){const r=GR[i];F[r[4]].q=r[5];$('#gsd').classList.remove('on');$('#gsi').value='';go(r[3])}
+const NAV=[['dash','Преглед','home'],['orders','Нарачки','bag'],['products','Производи','box'],['cust','Купувачи','users'],['inv','Залихи','layers'],['an','Извештаи и аналитика','chart']];
+let cur='dash';
+function go(v){cur=v;$('#main').innerHTML=`<div class="view">${V[v].html()}</div>`;document.querySelectorAll('#nav a').forEach(a=>a.classList.toggle('on',a.dataset.v==v));document.body.classList.remove('mo');scrollTo(0,0);refresh()}
+$('#nav').innerHTML=NAV.map(n=>`<a data-v="${n[0]}" onclick="go('${n[0]}')" tabindex="0" onkeydown="if(event.key=='Enter')go('${n[0]}')">${ic(n[2],20)}<span class="lb">${n[1]}</span>${n[0]=='inv'||n[0]=='orders'?`<span class="nb" data-v="${n[0]}"></span>`:''}</a>`).join('');
+$('#lg').innerHTML=ic('bag',20);$('#mn').innerHTML=ic('menu');$('#si').innerHTML=ic('search',16);$('#mx').innerHTML=ic('x');
+if(localStorage.getItem('ltheme'))document.documentElement.dataset.theme='dark';
+if(localStorage.getItem('lcol')&&innerWidth>900)document.body.classList.add('col');
+go('dash');
+</script>
+</body>
+</html>
